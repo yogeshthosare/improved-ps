@@ -44,7 +44,7 @@ func main() {
 	// Note that "cmd" does not work on Mac, but "command" works on both Mac & Linux
 	// -A select all processes
 	// -o format specfier in results, in our case  pid,command
-	exe_string := "/sbin/metadataagent"
+	exe_string := "/sbin/yourprocess"
 	cmd := exec.Command("/bin/ps", "-Ao", "uid,pid,command")
 
 	cmdOutput, cmdErrOutput, err := RunCmd(cmd)
@@ -58,18 +58,18 @@ func main() {
 	if len(output) > 0 {
 		lines := strings.Split(string(output), "\n")
 		for _, line := range lines {
-			if strings.Contains(line, exe_string) { // is proc a metadataagent?
+			if strings.Contains(line, exe_string) { // is proc yourprocess?
 				filteredLine := strings.Join(strings.Fields(line), " ")
 				lineTrimmed := strings.SplitN(filteredLine, " ", 3)
 				uid, err := strconv.Atoi(lineTrimmed[0])
 				if err != nil {
 					fmt.Println("Error in ps", err)
-					os.Exit(0)
+					os.Exit(1)
 				}
 				pid, err := strconv.Atoi(lineTrimmed[1])
 				if err != nil {
 					fmt.Println("Error in ps", err)
-					os.Exit(0)
+					os.Exit(1)
 				}
 				cmdline := lineTrimmed[2]
 				fields := make([]string, 0)
@@ -94,8 +94,5 @@ func main() {
 		fmt.Printf("Pid %d, %+v\n", i, proc.Pid)
 		fmt.Printf("TheCmdLine %d, %+v\n", i, proc.TheCmdline)
 		fmt.Printf("TheFields %d, %+v\n", i, proc.TheFields)
-		if i == 2 {
-			break
-		}
 	}
 }
